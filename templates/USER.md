@@ -12,16 +12,6 @@
 - **Preferred channel:** {{PREFERRED_CHANNEL}}
 - **Detail level:** {{DETAIL_LEVEL}}
 
-## Hard Rules
-{{#each USER_RULES}}
-- {{rule}}
-{{/each}}
-
-## Pet Peeves
-{{#each PET_PEEVES}}
-- {{peeve}}
-{{/each}}
-
 ## What Makes a Good Update
 - Lead with the outcome (done/blocked/in progress)
 - Include relevant links or proof of work

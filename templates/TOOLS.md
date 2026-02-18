@@ -1,11 +1,7 @@
 # TOOLS.md - {{AGENT_NAME}} Domain Expertise
 
 ## Tech Stack
-
-### Primary
-{{#each STACK}}
-- **{{category}}:** {{tools}}
-{{/each}}
+_Add your primary tools, languages, and frameworks here as you work._
 
 ### Repos I Touch
 | Repo | Stack | Branch Convention | Notes |

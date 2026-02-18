@@ -1,5 +1,20 @@
 # Changelog
 
+## v2.2.0 (2026-02-18)
+
+### Added
+- lib/defaults.sh: Extracted default values into reusable library
+- references/PLATFORM_COMPATIBILITY.md: Triple platform guide (OpenClaw + Claude Code + Codex)
+- references/WORKSPACE_ANATOMY.md: Detailed explanation of every generated file
+
+### Improved
+- Removed empty "Pet Peeves" and "Hard Rules" sections from quick mode output
+- Fixed "Proactive Behavior" section showing duplicate intro text in HEARTBEAT.md
+- TOOLS.md Tech Stack section shows helpful placeholder instead of empty headers
+- AGENTS.md simplified for quick mode (no empty delegation sections)
+- Python post-processor handles nested empty section cleanup more robustly
+- Architect version bumped to 2.2.0 in metadata output
+
 ## v2.1.0 (2026-02-18)
 
 ### Improved

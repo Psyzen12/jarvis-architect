@@ -217,12 +217,16 @@ process_template() {
   content=$(echo "$content" | sed -E '/\{\{[a-z_]+\}\}.*\{\{[a-z_]+\}\}/d')
   # Remove lines that are just "{{lowercase_var}}" (leftover block content)
   content=$(echo "$content" | sed -E '/^[[:space:]]*\{\{[a-z_]+\}\}[[:space:]]*$/d')
-  # Remove empty markdown sections (## Header with no content before next header)
+  # Remove empty markdown sections and clean up
   content=$(printf '%s' "$content" | python3 -c "
 import sys, re
 text = sys.stdin.read()
 # Remove sections where a heading is followed only by whitespace then another heading or EOF
-text = re.sub(r'(^|\n)(#{2,} [^\n]+)\n(\s*\n)(?=#{2,} |\Z)', r'\1', text)
+# Handles both ## and ### levels
+for _ in range(3):  # multiple passes for nested cleanup
+    text = re.sub(r'\n(#{2,} [^\n]+)\n\s*\n(?=#{1,} |\Z)', '\n', text)
+# Remove any remaining empty sections at end of file
+text = re.sub(r'\n(#{2,} [^\n]+)\s*$', '', text)
 # Clean up excessive blank lines
 text = re.sub(r'\n{3,}', '\n\n', text)
 print(text.strip())
@@ -258,7 +262,7 @@ agent:
   model: ${MODEL:-anthropic/claude-sonnet-4-20250514}
   channel: ${PRIMARY_CHANNEL:-discord}
   created: $DATE
-  architect_version: "2.0.0"
+  architect_version: "2.2.0"
 EOF
 echo "  OK: metadata.yaml"
 

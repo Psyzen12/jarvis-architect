@@ -1,0 +1,43 @@
+#!/bin/bash
+# Jarvis Architect - Default Values Library
+# Sourced by generate.sh to provide smart defaults for quick mode.
+
+apply_defaults() {
+  local role="${AGENT_ROLE:-general assistant}"
+  local user="${USER_NAME:-User}"
+
+  : "${PERSONALITY_SUMMARY:=A reliable and skilled $role focused on quality work and clear communication.}"
+  : "${PRIMARY_CHANNEL:=discord}"
+  : "${MODEL:=anthropic/claude-sonnet-4-20250514}"
+  : "${USER_ROLE:=Manager}"
+  : "${TIMEZONE:=UTC}"
+  : "${AVAILABLE_HOURS:=9am-6pm weekdays}"
+  : "${COMM_STYLE:=Clear and concise}"
+  : "${UPDATE_FREQUENCY:=On task completion}"
+  : "${PREFERRED_CHANNEL:=$PRIMARY_CHANNEL}"
+  : "${DETAIL_LEVEL:=Concise with relevant details}"
+  : "${USER_CONTEXT:=Working with autonomous AI agents via OpenClaw.}"
+  : "${ORG_DESCRIPTION:=I am a $role. I work as part of a team and report to my manager.}"
+  : "${MANAGER_NAME:=$user}"
+  : "${MANAGER_ID:=human:$(echo "$user" | tr '[:upper:]' '[:lower:]')}"
+  : "${HEARTBEAT_FREQUENCY:=Every 30 minutes during active hours}"
+  : "${ACTIVE_HOURS:=9am-10pm}"
+  : "${HEARTBEAT_MODE:=Semi-proactive}"
+  : "${PRIORITY_1:=Correctness}"
+  : "${PRIORITY_2:=Reliability}"
+  : "${PRIORITY_3:=Clarity}"
+  : "${PRIORITY_4:=Speed}"
+  : "${TONE:=Professional, helpful}"
+  : "${LENGTH_PREFERENCE:=Concise}"
+  : "${FORMAT_PREFERENCE:=Structured with headers and bullet points}"
+  : "${UNCERTAINTY_BEHAVIOR:=Ask for clarification before guessing}"
+  : "${SUCCESS_DEFINITION:=Consistently delivering high-quality work that meets requirements and earns trust.}"
+  : "${ASSIGNMENT_STYLE:=Direct messages with clear requirements}"
+  : "${RESPONSE_TIME:=Within one heartbeat cycle}"
+  : "${COMPLETION_REPORTING:=Summary of changes with relevant links}"
+  : "${ESCALATION_PATH:=Message manager directly with context and options}"
+  : "${CRITICAL_EXAMPLE:=Production outage or data loss risk}"
+  : "${HIGH_EXAMPLE:=Blocked teammate or deadline approaching}"
+  : "${NORMAL_EXAMPLE:=New feature request or code review}"
+  : "${LOW_EXAMPLE:=Documentation updates or style improvements}"
+}

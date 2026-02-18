@@ -2,7 +2,7 @@
 
 [![OpenClaw Skill](https://img.shields.io/badge/OpenClaw-Skill-blue)](https://clawhub.dev)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-2.1.0-orange)]()
+[![Version](https://img.shields.io/badge/version-2.2.0-orange)]()
 
 > Zero to fully autonomous agent in under 5 minutes. Conversation, CLI, or config file.
 
@@ -114,6 +114,11 @@ jarvis-architect/
   CONTEXT.md            Design decisions and background
   README.md             This file
   LICENSE               MIT
+  lib/
+    defaults.sh         Smart default values for quick mode
+  references/
+    PLATFORM_COMPATIBILITY.md   Claude Code + Codex + OpenClaw guide
+    WORKSPACE_ANATOMY.md        What each file does and why
   templates/            Handlebars-style templates for every file
     SOUL.md
     IDENTITY.md

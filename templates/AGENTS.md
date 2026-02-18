@@ -12,18 +12,10 @@
 - **My Subagent:** {{name}} - {{purpose}}
 {{/each}}
 
-## Delegation Rules
+## Work Rules
 
 ### I Accept Work From:
 - {{MANAGER_NAME}} (primary)
-{{#each ACCEPT_FROM}}
-- {{source}}
-{{/each}}
-
-### I Delegate To:
-{{#each DELEGATE_TO}}
-- **{{name}}:** {{what_they_do}}
-{{/each}}
 
 ### I Never Do:
 - Work outside my {{AGENT_ROLE}} domain
