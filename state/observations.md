@@ -15,7 +15,7 @@ _This file is updated as the skill is used. Each observation helps improve futur
 - (none yet)
 
 ## Improvement Ideas
-- Add interactive mode to generate.sh that prompts for each variable
 - Add JSON config support alongside KEY=VALUE
-- Add "quick mode" that uses smart defaults and only asks 3 questions
 - Consider a web UI for the onboarding flow
+- Add `--dry-run` flag to preview generated output without writing files
+- Support generating into an existing workspace (merge/update mode)
