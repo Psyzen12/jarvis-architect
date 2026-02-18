@@ -1,6 +1,10 @@
 # Jarvis Architect
 
-> Build a complete autonomous agent workspace in minutes. Guided conversation or one command.
+[![OpenClaw Skill](https://img.shields.io/badge/OpenClaw-Skill-blue)](https://clawhub.dev)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![Version](https://img.shields.io/badge/version-2.1.0-orange)]()
+
+> Zero to fully autonomous agent in under 5 minutes. Conversation, CLI, or config file.
 
 Every OpenClaw agent needs identity files, memory systems, heartbeat loops, and org structure. Setting this up manually takes hours and deep platform knowledge. Jarvis Architect generates everything through a 7-step guided flow or a single script invocation.
 

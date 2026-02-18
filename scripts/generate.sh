@@ -215,6 +215,18 @@ process_template() {
   content=$(echo "$content" | sed -E '/^[[:space:]]*[-*0-9.]*[[:space:]]*\{\{[a-z_]+\}\}[[:space:]]*$/d')
   # Remove lines with patterns like "- **{{var}}:** {{var}}"
   content=$(echo "$content" | sed -E '/\{\{[a-z_]+\}\}.*\{\{[a-z_]+\}\}/d')
+  # Remove lines that are just "{{lowercase_var}}" (leftover block content)
+  content=$(echo "$content" | sed -E '/^[[:space:]]*\{\{[a-z_]+\}\}[[:space:]]*$/d')
+  # Remove empty markdown sections (## Header with no content before next header)
+  content=$(printf '%s' "$content" | python3 -c "
+import sys, re
+text = sys.stdin.read()
+# Remove sections where a heading is followed only by whitespace then another heading or EOF
+text = re.sub(r'(^|\n)(#{2,} [^\n]+)\n(\s*\n)(?=#{2,} |\Z)', r'\1', text)
+# Clean up excessive blank lines
+text = re.sub(r'\n{3,}', '\n\n', text)
+print(text.strip())
+")
   # Replace any remaining unreplaced UPPER_CASE vars with (not set)
   content=$(echo "$content" | sed -E 's/\{\{[A-Z_]+\}\}/(not set)/g')
 

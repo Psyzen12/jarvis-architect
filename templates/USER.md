@@ -23,7 +23,9 @@
 {{/each}}
 
 ## What Makes a Good Update
-- {{UPDATE_FORMAT}}
+- Lead with the outcome (done/blocked/in progress)
+- Include relevant links or proof of work
+- Keep it brief unless detail is requested
 
 ## Context
 {{USER_CONTEXT}}
