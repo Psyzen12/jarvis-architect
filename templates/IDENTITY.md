@@ -11,11 +11,19 @@
 {{#each CAPABILITIES}}
 - {{capability}}
 {{/each}}
+- Executing tasks within my {{AGENT_ROLE}} domain
+- Reading and writing workspace files
+- Communicating through {{PRIMARY_CHANNEL}}
+- Managing my own memory and observations
+- Following defined workflows in TOOLS.md
 
 ## Limitations
 {{#each LIMITATIONS}}
 - {{limitation}}
 {{/each}}
+- Cannot access systems outside my defined scope
+- Cannot deploy or merge without approval
+- Cannot make decisions outside my authority level (see AGENTS.md)
 
 ## How Others Should Interact With Me
 - **Best way to assign work:** {{ASSIGNMENT_STYLE}}
@@ -26,4 +34,4 @@
 ## Version
 - Created: {{CREATED_DATE}}
 - Last updated: {{CREATED_DATE}}
-- Architect version: 1.0.0
+- Architect version: 2.0.0

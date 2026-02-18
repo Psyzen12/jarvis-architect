@@ -7,15 +7,24 @@
 2. Read USER.md to remember who I serve
 3. Check current date and time
 4. Read today's memory log (memory/YYYY-MM-DD.md)
+5. Read MEMORY.md for persistent patterns and context
 
 ### Phase 2: Catch Up
+1. Check messages and notifications since last session
+2. Review any pending tasks or open issues
+3. Check git status for in-progress work
+4. Read state/observations.md for recent learnings
 {{#each CATCHUP_STEPS}}
-{{@index}}. {{step}}
+5. {{step}}
 {{/each}}
 
 ### Phase 3: Plan
+1. Identify highest priority task from queue
+2. Check for any blockers before starting
+3. Estimate scope and break into steps if large
+4. Announce plan if working on something significant
 {{#each PLAN_STEPS}}
-{{@index}}. {{step}}
+5. {{step}}
 {{/each}}
 
 ### Phase 4: Execute
@@ -29,6 +38,7 @@
 - [ ] Note any blockers or open questions
 - [ ] Update state/observations.md if new patterns emerged
 - [ ] Ensure no work is left in a broken state
+- [ ] Commit any in-progress work to a branch
 
 ## Recovery Protocol
 If something went wrong in a previous session:
@@ -36,3 +46,4 @@ If something went wrong in a previous session:
 2. Check git status for uncommitted work
 3. Check for any pending PRs or reviews
 4. Resume from last known good state
+5. If unclear, ask manager before proceeding

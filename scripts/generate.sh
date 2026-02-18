@@ -1,14 +1,13 @@
 #!/bin/bash
 # Jarvis Architect - Workspace Generator
-# Processes templates and creates a complete agent workspace
-# Usage: bash scripts/generate.sh <output-dir> <config-file>
+# Processes templates and creates a complete agent workspace.
+#
+# Usage:
+#   Interactive:  bash scripts/generate.sh <output-dir>
+#   From config:  bash scripts/generate.sh <output-dir> <config-file>
+#   Quick mode:   bash scripts/generate.sh --quick <output-dir>
 #
 # The config file is a simple KEY=VALUE file with template variables.
-# Example:
-#   AGENT_NAME=Atlas
-#   AGENT_ROLE=backend developer
-#   AGENT_SLUG=atlas
-#   ...
 
 set -euo pipefail
 
@@ -16,64 +15,214 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SKILL_DIR="$(dirname "$SCRIPT_DIR")"
 TEMPLATE_DIR="$SKILL_DIR/templates"
 
-OUTPUT_DIR="${1:?Usage: generate.sh <output-dir> <config-file>}"
-CONFIG_FILE="${2:?Usage: generate.sh <output-dir> <config-file>}"
+# --- Parse args ---
+QUICK_MODE=false
+INTERACTIVE=false
 
-if [ ! -f "$CONFIG_FILE" ]; then
-  echo "Error: Config file not found: $CONFIG_FILE"
-  exit 1
+if [ "${1:-}" = "--quick" ]; then
+  QUICK_MODE=true
+  shift
 fi
 
-echo "=== Jarvis Architect - Generating Workspace ==="
-echo "Output: $OUTPUT_DIR"
-echo "Config: $CONFIG_FILE"
-echo ""
+OUTPUT_DIR="${1:?Usage: generate.sh [--quick] <output-dir> [config-file]}"
+CONFIG_FILE="${2:-}"
 
-# Create directory structure
-mkdir -p "$OUTPUT_DIR"/{memory,crons,scripts,state}
+if [ -z "$CONFIG_FILE" ]; then
+  INTERACTIVE=true
+fi
 
-# Load config as environment variables
-set -a
-source "$CONFIG_FILE"
-set +a
+# --- Interactive prompt helper ---
+ask() {
+  local var="$1" prompt="$2" default="${3:-}"
+  if [ -n "$default" ]; then
+    read -rp "$prompt [$default]: " value
+    eval "$var=\"\${value:-$default}\""
+  else
+    read -rp "$prompt: " value
+    eval "$var=\"\$value\""
+  fi
+}
 
-# Set defaults
+# --- Interactive / Quick mode ---
+if [ "$INTERACTIVE" = true ]; then
+  echo "=== Jarvis Architect - Interactive Setup ==="
+  echo ""
+
+  ask AGENT_NAME "Agent name (e.g., Atlas, Nova)" ""
+  ask AGENT_ROLE "Agent role (e.g., backend developer, copywriter)" ""
+  AGENT_SLUG=$(echo "$AGENT_NAME" | tr '[:upper:]' '[:lower:]' | tr ' ' '-')
+
+  if [ "$QUICK_MODE" = true ]; then
+    ask USER_NAME "Your name" ""
+    # Apply smart defaults
+    PERSONALITY_SUMMARY="A reliable and skilled $AGENT_ROLE focused on quality work and clear communication."
+    PRIMARY_CHANNEL="discord"
+    MODEL="anthropic/claude-sonnet-4-20250514"
+    USER_ROLE="Manager"
+    TIMEZONE="UTC"
+    AVAILABLE_HOURS="9am-6pm weekdays"
+    COMM_STYLE="Clear and concise"
+    UPDATE_FREQUENCY="On task completion"
+    PREFERRED_CHANNEL="discord"
+    DETAIL_LEVEL="Concise with relevant details"
+    USER_CONTEXT="Working with autonomous AI agents via OpenClaw."
+    ORG_DESCRIPTION="I am a $AGENT_ROLE. I work as part of a team and report to my manager."
+    MANAGER_NAME="$USER_NAME"
+    MANAGER_ID="human:$(echo "$USER_NAME" | tr '[:upper:]' '[:lower:]')"
+    HEARTBEAT_FREQUENCY="Every 30 minutes during active hours"
+    ACTIVE_HOURS="9am-10pm"
+    HEARTBEAT_MODE="Semi-proactive"
+    PRIORITY_1="Correctness"
+    PRIORITY_2="Reliability"
+    PRIORITY_3="Clarity"
+    PRIORITY_4="Speed"
+    TONE="Professional, helpful"
+    LENGTH_PREFERENCE="Concise"
+    FORMAT_PREFERENCE="Structured with headers and bullet points"
+    UNCERTAINTY_BEHAVIOR="Ask for clarification before guessing"
+    SUCCESS_DEFINITION="Consistently delivering high-quality work that meets requirements and earns trust."
+    ASSIGNMENT_STYLE="Direct messages with clear requirements"
+    RESPONSE_TIME="Within one heartbeat cycle"
+    COMPLETION_REPORTING="Summary of changes with relevant links"
+    ESCALATION_PATH="Message manager directly with context and options"
+    CRITICAL_EXAMPLE="Production outage or data loss risk"
+    HIGH_EXAMPLE="Blocked teammate or deadline approaching"
+    NORMAL_EXAMPLE="New feature request or code review"
+    LOW_EXAMPLE="Documentation updates or style improvements"
+  else
+    echo ""
+    echo "--- Identity ---"
+    ask PERSONALITY_SUMMARY "Brief personality description" "A reliable and skilled $AGENT_ROLE focused on quality work."
+    ask PRIMARY_CHANNEL "Primary channel (discord/whatsapp/telegram/slack)" "discord"
+    ask MODEL "AI model" "anthropic/claude-sonnet-4-20250514"
+    echo ""
+    echo "--- User Profile ---"
+    ask USER_NAME "Your name" ""
+    ask USER_ROLE "Your role" "Manager"
+    ask TIMEZONE "Your timezone" "America/New_York"
+    ask AVAILABLE_HOURS "Your available hours" "9am-6pm weekdays"
+    ask COMM_STYLE "Your communication style" "Brief and technical"
+    ask UPDATE_FREQUENCY "How often do you want updates?" "On task completion"
+    ask PREFERRED_CHANNEL "Preferred channel for updates" "$PRIMARY_CHANNEL"
+    ask DETAIL_LEVEL "Detail level (concise/detailed)" "Concise with relevant details"
+    ask USER_CONTEXT "Brief context about your setup" ""
+    echo ""
+    echo "--- Org Structure ---"
+    ask ORG_DESCRIPTION "Agent's place in the org" "I am a $AGENT_ROLE reporting to $USER_NAME."
+    ask MANAGER_NAME "Manager name and role" "$USER_NAME"
+    ask MANAGER_ID "Manager ID" "human:$(echo "$USER_NAME" | tr '[:upper:]' '[:lower:]')"
+    echo ""
+    echo "--- Heartbeat ---"
+    ask HEARTBEAT_FREQUENCY "Heartbeat frequency" "Every 30 minutes during active hours"
+    ask ACTIVE_HOURS "Active hours" "9am-10pm"
+    ask HEARTBEAT_MODE "Mode (reactive/semi-proactive/proactive)" "Semi-proactive"
+    echo ""
+    echo "--- Decision Framework ---"
+    ask PRIORITY_1 "Top priority value" "Correctness"
+    ask PRIORITY_2 "Second priority" "Reliability"
+    ask PRIORITY_3 "Third priority" "Clarity"
+    ask PRIORITY_4 "Fourth priority" "Speed"
+    echo ""
+    echo "--- Communication ---"
+    ask TONE "Communication tone" "Professional, helpful"
+    ask LENGTH_PREFERENCE "Preferred length" "Concise"
+    ask FORMAT_PREFERENCE "Preferred format" "Structured with headers and bullet points"
+    ask UNCERTAINTY_BEHAVIOR "When uncertain..." "Ask for clarification before guessing"
+    ask SUCCESS_DEFINITION "What success looks like" "Consistently delivering high-quality work."
+    ask ASSIGNMENT_STYLE "Best way to assign work" "Direct messages with clear requirements"
+    ask RESPONSE_TIME "Expected response time" "Within one heartbeat cycle"
+    ask COMPLETION_REPORTING "How completion is reported" "Summary of changes with relevant links"
+    ask ESCALATION_PATH "How to escalate" "Message manager directly with context and options"
+    echo ""
+    echo "--- Priority Examples ---"
+    ask CRITICAL_EXAMPLE "Critical priority example" "Production outage or data loss"
+    ask HIGH_EXAMPLE "High priority example" "Blocked teammate or deadline"
+    ask NORMAL_EXAMPLE "Normal priority example" "New feature request"
+    ask LOW_EXAMPLE "Low priority example" "Documentation updates"
+  fi
+
+  # Write config file for reproducibility
+  CONFIG_FILE="$OUTPUT_DIR/.jarvis-config"
+  mkdir -p "$OUTPUT_DIR"
+  {
+    echo "# Auto-generated by Jarvis Architect on $(date +%Y-%m-%d)"
+    for var in AGENT_NAME AGENT_ROLE AGENT_SLUG PERSONALITY_SUMMARY PRIMARY_CHANNEL MODEL \
+               USER_NAME USER_ROLE TIMEZONE AVAILABLE_HOURS COMM_STYLE UPDATE_FREQUENCY \
+               PREFERRED_CHANNEL DETAIL_LEVEL USER_CONTEXT ORG_DESCRIPTION MANAGER_NAME \
+               MANAGER_ID HEARTBEAT_FREQUENCY ACTIVE_HOURS HEARTBEAT_MODE PRIORITY_1 \
+               PRIORITY_2 PRIORITY_3 PRIORITY_4 TONE LENGTH_PREFERENCE FORMAT_PREFERENCE \
+               UNCERTAINTY_BEHAVIOR SUCCESS_DEFINITION ASSIGNMENT_STYLE RESPONSE_TIME \
+               COMPLETION_REPORTING ESCALATION_PATH CRITICAL_EXAMPLE HIGH_EXAMPLE \
+               NORMAL_EXAMPLE LOW_EXAMPLE; do
+      eval "echo \"$var=\${$var:-}\""
+    done
+  } > "$CONFIG_FILE"
+  echo ""
+  echo "Config saved to: $CONFIG_FILE"
+else
+  if [ ! -f "$CONFIG_FILE" ]; then
+    echo "Error: Config file not found: $CONFIG_FILE"
+    exit 1
+  fi
+  # Load config
+  set -a
+  source "$CONFIG_FILE"
+  set +a
+fi
+
+# --- Set computed defaults ---
 DATE="${DATE:-$(date +%Y-%m-%d)}"
 CREATED_DATE="${CREATED_DATE:-$DATE}"
+AGENT_SLUG="${AGENT_SLUG:-$(echo "${AGENT_NAME:-agent}" | tr '[:upper:]' '[:lower:]' | tr ' ' '-')}"
 
-# Simple template processor - replaces {{VAR}} with $VAR value
+echo ""
+echo "=== Generating Workspace for: $AGENT_NAME ==="
+echo "Output: $OUTPUT_DIR"
+echo ""
+
+# --- Create directory structure ---
+mkdir -p "$OUTPUT_DIR"/{memory,crons,scripts,state,shared-context,subagents,products}
+
+# --- Template processor ---
 process_template() {
   local template="$1"
   local output="$2"
 
   if [ ! -f "$template" ]; then
-    echo "  SKIP: Template not found: $template"
+    echo "  SKIP: Template not found: $(basename "$template")"
     return
   fi
 
   local content
   content=$(cat "$template")
 
-  # Replace simple {{VAR}} placeholders
-  while IFS= read -r line; do
-    key="${line%%=*}"
-    value="${line#*=}"
-    content="${content//\{\{$key\}\}/$value}"
-  done < "$CONFIG_FILE"
+  # Replace all known {{VAR}} placeholders
+  for var in AGENT_NAME AGENT_ROLE AGENT_SLUG PERSONALITY_SUMMARY PRIMARY_CHANNEL MODEL \
+             USER_NAME USER_ROLE TIMEZONE AVAILABLE_HOURS COMM_STYLE UPDATE_FREQUENCY \
+             PREFERRED_CHANNEL DETAIL_LEVEL USER_CONTEXT ORG_DESCRIPTION MANAGER_NAME \
+             MANAGER_ID HEARTBEAT_FREQUENCY ACTIVE_HOURS HEARTBEAT_MODE PRIORITY_1 \
+             PRIORITY_2 PRIORITY_3 PRIORITY_4 TONE LENGTH_PREFERENCE FORMAT_PREFERENCE \
+             UNCERTAINTY_BEHAVIOR SUCCESS_DEFINITION ASSIGNMENT_STYLE RESPONSE_TIME \
+             COMPLETION_REPORTING ESCALATION_PATH CRITICAL_EXAMPLE HIGH_EXAMPLE \
+             NORMAL_EXAMPLE LOW_EXAMPLE DATE CREATED_DATE; do
+    eval "val=\"\${$var:-}\""
+    content="${content//\{\{$var\}\}/$val}"
+  done
 
-  # Replace {{DATE}} with current date
-  content="${content//\{\{DATE\}\}/$DATE}"
-  content="${content//\{\{CREATED_DATE\}\}/$CREATED_DATE}"
-
-  # Strip remaining handlebars block helpers ({{#each}}, {{/each}}, {{#if}}, {{/if}})
-  # These need the full onboarding flow to populate; leave clean placeholder comments
-  content=$(echo "$content" | sed -E '/\{\{#(each|if)/d; /\{\{\/(each|if)/d; /\{\{@index\}\}/d')
+  # Clean up handlebars block syntax (used for agent-driven full flow)
+  content=$(echo "$content" | sed -E '/\{\{#(each|if)/d; /\{\{\/(each|if)/d; /\{\{@index\}\}/d; /\{\{else\}\}/d')
+  # Remove lines that are entirely unreplaced handlebars placeholders (list items from blocks)
+  content=$(echo "$content" | sed -E '/^[[:space:]]*[-*0-9.]*[[:space:]]*\{\{[a-z_]+\}\}[[:space:]]*$/d')
+  # Remove lines with patterns like "- **{{var}}:** {{var}}"
+  content=$(echo "$content" | sed -E '/\{\{[a-z_]+\}\}.*\{\{[a-z_]+\}\}/d')
+  # Replace any remaining unreplaced UPPER_CASE vars with (not set)
+  content=$(echo "$content" | sed -E 's/\{\{[A-Z_]+\}\}/(not set)/g')
 
   echo "$content" > "$output"
   echo "  OK: $(basename "$output")"
 }
 
-echo "--- Generating Core Files ---"
+echo "--- Core Files ---"
 process_template "$TEMPLATE_DIR/SOUL.md" "$OUTPUT_DIR/SOUL.md"
 process_template "$TEMPLATE_DIR/IDENTITY.md" "$OUTPUT_DIR/IDENTITY.md"
 process_template "$TEMPLATE_DIR/USER.md" "$OUTPUT_DIR/USER.md"
@@ -84,11 +233,24 @@ process_template "$TEMPLATE_DIR/BOOT.md" "$OUTPUT_DIR/BOOT.md"
 process_template "$TEMPLATE_DIR/TOOLS.md" "$OUTPUT_DIR/TOOLS.md"
 
 echo ""
-echo "--- Generating Support Files ---"
+echo "--- Support Files ---"
 process_template "$TEMPLATE_DIR/crons-README.md" "$OUTPUT_DIR/crons/README.md"
 process_template "$TEMPLATE_DIR/memory-daily.md" "$OUTPUT_DIR/memory/$DATE.md"
 
-# Copy health check script
+# Create metadata.yaml
+cat > "$OUTPUT_DIR/metadata.yaml" << EOF
+agent:
+  name: $AGENT_NAME
+  slug: $AGENT_SLUG
+  role: $AGENT_ROLE
+  model: ${MODEL:-anthropic/claude-sonnet-4-20250514}
+  channel: ${PRIMARY_CHANNEL:-discord}
+  created: $DATE
+  architect_version: "2.0.0"
+EOF
+echo "  OK: metadata.yaml"
+
+# Copy scripts
 cp "$SKILL_DIR/scripts/health-check.sh" "$OUTPUT_DIR/scripts/health-check.sh"
 chmod +x "$OUTPUT_DIR/scripts/health-check.sh"
 echo "  OK: scripts/health-check.sh"
@@ -107,6 +269,23 @@ _This file is updated as the agent operates. Each observation helps improve futu
 - (none yet)
 EOF
 echo "  OK: state/observations.md"
+
+# Create BOOTSTRAP.md
+cat > "$OUTPUT_DIR/BOOTSTRAP.md" << EOF
+# BOOTSTRAP.md - $AGENT_NAME
+
+## First Run Checklist
+- [ ] Review SOUL.md and adjust personality if needed
+- [ ] Review USER.md and add any missing preferences
+- [ ] Set up cron jobs per crons/README.md
+- [ ] Run first heartbeat manually to verify setup
+- [ ] Verify channel connectivity
+- [ ] Test a simple task end-to-end
+
+## Generated By
+Jarvis Architect v2.0.0 on $DATE
+EOF
+echo "  OK: BOOTSTRAP.md"
 
 echo ""
 echo "=== Generation Complete ==="
