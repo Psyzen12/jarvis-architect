@@ -2,7 +2,7 @@
 
 [![OpenClaw Skill](https://img.shields.io/badge/OpenClaw-Skill-blue)](https://clawhub.dev)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-2.2.0-orange)]()
+[![Version](https://img.shields.io/badge/version-2.3.0-orange)]()
 
 > Zero to fully autonomous agent in under 5 minutes. Conversation, CLI, or config file.
 

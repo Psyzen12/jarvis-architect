@@ -1,5 +1,15 @@
 # Changelog
 
+## v2.3.0 (2026-02-18)
+
+### Fixed
+- Minimal config values with spaces now properly quoted (was causing parse errors)
+- Config-file mode now applies smart defaults for missing values (minimal configs work perfectly)
+
+### Improved
+- Version bumped across all files for consistency
+- Repo transferred to klossic/jarvis-architect for ClawHub distribution
+
 ## v2.2.0 (2026-02-18)
 
 ### Added

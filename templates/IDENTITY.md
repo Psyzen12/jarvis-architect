@@ -34,4 +34,4 @@
 ## Version
 - Created: {{CREATED_DATE}}
 - Last updated: {{CREATED_DATE}}
-- Architect version: 2.2.0
+- Architect version: 2.3.0
